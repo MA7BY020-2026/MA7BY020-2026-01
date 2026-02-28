@@ -5,4 +5,6 @@ productivity <-  read.csv(url_productivity) |> dplyr::select(entity, year,produc
 url_unemployment <- "https://ourworldindata.org/grapher/unemployment-rate.csv?v=1&csvType=full&useColumnShortNames=true"
 unemployment <-  read.csv(url_unemployment) |> dplyr::select(entity, year,sl_uem_totl_zs) |> dplyr::rename(country = entity, unemployment = sl_uem_totl_zs)
 
+df <- dplyr::inner_join(x=productivity, y=unemployment, by=dplyr::join_by(country, year))
+
 

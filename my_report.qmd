@@ -1,0 +1,16 @@
+---
+title: "report_project_1"
+format: html
+editor: visual
+author: "LUNETTE Malcom, HUANG Luxuan"
+---
+
+## Report: LAB 1
+
+## Motivation
+
+## DATA
+
+## Figure
+
+## Appendix

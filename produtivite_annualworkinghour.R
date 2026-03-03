@@ -22,22 +22,26 @@ df$continent <- countrycode(sourcevar = df$country,
                             destination = "continent")
 
 figure <- df |>
-  filter(year == 2023) |>
   ggplot(aes(x = productivity, y = workhour, 
              color = continent,
-             size = log10(population),   
+             size = population,   
              text = paste("Country:", country,
                           "<br>Productivity:", productivity,
                           "<br>Workhour:", workhour,
-                          "<br>Population:", population))) +
+                          "<br>Population:", population),
+             frame = year
+             )) +
   geom_point(alpha = 0.7) +       
-  scale_size(range = c(2, 3)) +  
+  scale_size_area(
+    max_size = 25,
+    labels = scales::label_number(scale = 1/1e6, suffix = "B")
+  ) +
   theme_minimal() +
-  labs(title = "Productivity vs Annual Working Hour (2023)",
+  labs(title = "Productivity VS Annual Working Hour",
        x = "Productivity",
        y = "Annual Working Hour",
        color = "Continent",
-       size = "Population (log10)") 
+       size = "Population") 
 
 figure_interactive <- ggplotly(figure, tooltip = "text")
 print(figure_interactive)

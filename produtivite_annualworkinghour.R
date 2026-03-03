@@ -1,7 +1,8 @@
 library(dplyr)
 library(ggplot2)
 library(countrycode)
-library(dplyr)
+library(gapminder)
+library(plotly)
 
 url_productivity <- "https://ourworldindata.org/grapher/labor-productivity-per-hour-pennworldtable.csv?v=1&csvType=full&useColumnShortNames=true"
 productivity <-  read.csv(url_productivity) |> dplyr::select(entity, year,productivity) |> dplyr::rename(country = entity)
@@ -22,12 +23,21 @@ df$continent <- countrycode(sourcevar = df$country,
 
 figure <- df |>
   filter(year == 2023) |>
-  ggplot(aes(x = productivity, y = workhour, color = continent)) +
-  geom_point(alpha = 0.7, size = 3) +
+  ggplot(aes(x = productivity, y = workhour, 
+             color = continent,
+             size = log10(population),   
+             text = paste("Country:", country,
+                          "<br>Productivity:", productivity,
+                          "<br>Workhour:", workhour,
+                          "<br>Population:", population))) +
+  geom_point(alpha = 0.7) +       
+  scale_size(range = c(2, 3)) +  
   theme_minimal() +
-  labs(title = "productivity vs annual working hour (2023)",
-       x = "productivity",
-       y = "annual working hour",
-       color = "continent")
+  labs(title = "Productivity vs Annual Working Hour (2023)",
+       x = "Productivity",
+       y = "Annual Working Hour",
+       color = "Continent",
+       size = "Population (log10)") 
 
-print(figure)
+figure_interactive <- ggplotly(figure, tooltip = "text")
+print(figure_interactive)

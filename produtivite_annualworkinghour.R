@@ -1,4 +1,6 @@
-
+library(dplyr)
+library(ggplot2)
+library(countrycode)
 library(dplyr)
 
 url_productivity <- "https://ourworldindata.org/grapher/labor-productivity-per-hour-pennworldtable.csv?v=1&csvType=full&useColumnShortNames=true"
@@ -14,14 +16,18 @@ productivity_workhour <- dplyr::inner_join(x=productivity, y=workhour, by=dplyr:
 
 df <- dplyr::inner_join(x=productivity_workhour, y=population, by=dplyr::join_by(country, year))
 
+df$continent <- countrycode(sourcevar = df$country,
+                            origin = "country.name",
+                            destination = "continent")
+
 figure <- df |>
-  dplyr::filter(year==2023) |>
-  ggplot() +
-  aes(x = productivity) +
-  aes(y = workhour) +
-  aes(fill = country) +
-  aes(color= country) +
-  aes(frame = year) +
-  geom_point(alpha=.5)
+  filter(year == 2023) |>
+  ggplot(aes(x = productivity, y = workhour, color = continent)) +
+  geom_point(alpha = 0.7, size = 3) +
+  theme_minimal() +
+  labs(title = "productivity vs annual working hour (2023)",
+       x = "productivity",
+       y = "annual working hour",
+       color = "continent")
 
 print(figure)

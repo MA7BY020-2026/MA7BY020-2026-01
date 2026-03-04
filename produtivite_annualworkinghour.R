@@ -43,7 +43,7 @@ df <- dplyr::inner_join(x=productivity_workhour, y=population,
      dplyr::arrange(country, year) 
 
 # =============================================================================
-# 2. Creation of static plots with
+# 2. Creation of static plots with ggplot
 # =============================================================================
 #we make a figue
 figure_static <- df |>
@@ -86,7 +86,7 @@ figure_static <- df |>
 print(figure_static)
 
 # =============================================================================
-# 3. Creation of animated plots
+# 3. Creation of animated plots with plotly
 # =============================================================================
 # We make the animation
 figure <- df |>

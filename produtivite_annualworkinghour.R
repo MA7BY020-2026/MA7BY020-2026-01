@@ -131,6 +131,6 @@ figure <- df |>
 
 figure_interactive <- ggplotly(figure, tooltip = "text") |>
   layout(
-    legend = list(title = list(text = "Continent"))  # ← 
+    legend = list(title = list(text = "Continent"))  
   )
 print(figure_interactive)

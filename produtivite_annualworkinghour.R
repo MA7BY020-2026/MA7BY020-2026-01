@@ -15,27 +15,33 @@ population <-  read.csv(url_population) |> dplyr::select(entity, year,population
 
 productivity_workhour <- dplyr::inner_join(x=productivity, y=workhour, by=dplyr::join_by(country, year))
 
-df <- dplyr::inner_join(x=productivity_workhour, y=population, by=dplyr::join_by(country, year))
 
-df$continent <- countrycode(sourcevar = df$country,
-                            origin = "country.name",
-                            destination = "continent")
-df <- df |>
-  group_by(year) |>
-  filter(n_distinct(continent) == 5) |>
-  ungroup()
+
+df <- dplyr::inner_join(x=productivity_workhour, y=population, 
+                        by=dplyr::join_by(country, year)) |>
+     dplyr::mutate(
+     continent = countrycode(country, origin = "country.name", destination = "continent")
+     ) |>
+     dplyr::filter(!is.na(continent)) |>           # ← 
+     dplyr::group_by(year) |>
+     dplyr::filter(n_distinct(continent) == 5) |>
+     dplyr::ungroup() |>
+     dplyr::arrange(country, year) 
 
 figure <- df |>
-  ggplot(aes(x = productivity, y = workhour, 
+  ggplot(aes(x = productivity, 
+             y = workhour, 
              color = continent,
              size = population,   
-             text = paste("Country:", country,
-                          "<br>Productivity:", productivity,
-                          "<br>Workhour:", workhour,
-                          "<br>Population:", population),
-             frame = year
-  )) +
-  geom_point(alpha = 0.7) + 
+             text = paste(
+               "Country:", country,
+               "Productivity:", productivity,
+               "Workhour:", workhour,
+               "Population:", population),
+             frame = year,
+             ids = country,
+             group = country)) +
+  geom_point(alpha = 0.75) +
   scale_size_area(
     max_size = 25,
     labels = scales::label_number(scale = 1/1e6, suffix = "B")

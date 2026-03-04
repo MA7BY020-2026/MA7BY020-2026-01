@@ -6,6 +6,7 @@ library(ggplot2)
 library(countrycode)
 library(gapminder)
 library(plotly)
+library(ggrepel)
 
 # Download and make a clean dataframe from ourworldindata's productivity data 
 url_productivity <- "https://ourworldindata.org/grapher/labor-productivity-per-hour-pennworldtable.csv?v=1&csvType=full&useColumnShortNames=true"
@@ -19,7 +20,6 @@ workhour <-read.csv(url_workhour) |> dplyr::select(entity, year,working_hours_om
 url_population <- "https://ourworldindata.org/grapher/population.csv?v=1&csvType=full&useColumnShortNames=true"
 population <-  read.csv(url_population) |> dplyr::select(entity, year,population_historical) |> dplyr::rename(country = entity, population = population_historical)
 # Now we have three datasets
-
 
 # =============================================================================
 # 1. Data preparation
@@ -43,7 +43,7 @@ df <- dplyr::inner_join(x=productivity_workhour, y=population,
      dplyr::arrange(country, year) 
 
 # =============================================================================
-# 2. Creation of static plots（2023）
+# 2. Creation of static plots with
 # =============================================================================
 #we make a figue
 figure_static <- df |>

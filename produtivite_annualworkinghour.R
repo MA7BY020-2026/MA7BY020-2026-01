@@ -15,8 +15,6 @@ population <-  read.csv(url_population) |> dplyr::select(entity, year,population
 
 productivity_workhour <- dplyr::inner_join(x=productivity, y=workhour, by=dplyr::join_by(country, year))
 
-
-
 df <- dplyr::inner_join(x=productivity_workhour, y=population, 
                         by=dplyr::join_by(country, year)) |>
      dplyr::mutate(
@@ -29,6 +27,7 @@ df <- dplyr::inner_join(x=productivity_workhour, y=population,
      dplyr::arrange(country, year) 
 
 figure <- df |>
+  arrange(year, desc(population)) |> 
   ggplot(aes(x = productivity, 
              y = workhour, 
              color = continent,
@@ -41,17 +40,34 @@ figure <- df |>
              frame = year,
              ids = country,
              group = country)) +
-  geom_point(alpha = 0.75) +
+  geom_point(alpha = 0.6, stroke = 1.0) +   
+  scale_color_manual(values = c(
+    "Africa"   = "#fc5173",  
+    "Americas" = "#fde803",  
+    "Asia"     = "#01d4e5",  
+    "Europe"   = "#7dea01",  
+    "Oceania"  = "#9B6BB5"
+  )) +
   scale_size_area(
-    max_size = 25,
+    max_size = 28,
     labels = scales::label_number(scale = 1/1e6, suffix = "B")
   ) +
-  theme_minimal() +
-  labs(title = "Productivity VS Annual Working Hour",
-       x = "Productivity",
-       y = "Annual Working Hour",
-       color = "Continent",
-       size = "Population") 
+  scale_x_log10() + 
+  theme_minimal(base_size = 13) +
+  theme(
+  legend.position = "right",
+  plot.title = element_text(face = "bold", size = 15)
+  ) +
+  guides(
+    color = guide_legend(title = "Continent", override.aes = list(size = 4)),
+    size  = guide_legend(title = "Population")
+  )+
+  labs(title = "Labor Productivity vs. Annual Working Hours",
+    x = "Labor Productivity (log scale)",
+    y = "Annual Working Hours")
 
-figure_interactive <- ggplotly(figure, tooltip = "text") 
+figure_interactive <- ggplotly(figure, tooltip = "text") |>
+  layout(
+    legend = list(title = list(text = "Continent"))  # ← 
+  )
 print(figure_interactive)

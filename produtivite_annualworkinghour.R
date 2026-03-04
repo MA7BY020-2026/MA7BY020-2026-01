@@ -20,6 +20,10 @@ df <- dplyr::inner_join(x=productivity_workhour, y=population, by=dplyr::join_by
 df$continent <- countrycode(sourcevar = df$country,
                             origin = "country.name",
                             destination = "continent")
+df <- df |>
+  group_by(year) |>
+  filter(n_distinct(continent) == 5) |>
+  ungroup()
 
 figure <- df |>
   ggplot(aes(x = productivity, y = workhour, 
@@ -30,8 +34,8 @@ figure <- df |>
                           "<br>Workhour:", workhour,
                           "<br>Population:", population),
              frame = year
-             )) +
-  geom_point(alpha = 0.7) +       
+  )) +
+  geom_point(alpha = 0.7) + 
   scale_size_area(
     max_size = 25,
     labels = scales::label_number(scale = 1/1e6, suffix = "B")
@@ -43,5 +47,5 @@ figure <- df |>
        color = "Continent",
        size = "Population") 
 
-figure_interactive <- ggplotly(figure, tooltip = "text")
+figure_interactive <- ggplotly(figure, tooltip = "text") 
 print(figure_interactive)

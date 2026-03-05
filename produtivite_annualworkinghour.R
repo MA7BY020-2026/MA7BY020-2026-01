@@ -47,7 +47,6 @@ df <- dplyr::inner_join(x=productivity_workhour, y=population,
 # =============================================================================
 # 2. Creation of static plots with ggplot
 # =============================================================================
-#we make a figue
 figure_static <- df |>
   filter(year == 2023) |>                        
   arrange(desc(population)) |>
@@ -81,8 +80,8 @@ figure_static <- df |>
     size  = guide_legend(title = "Population")
   ) +
   labs(title = "Labor Productivity vs. Annual Working Hours (2023)",
-       x = "Labor Productivity (USD/hr, log scale)", 
-       y = "Annual Working Hours(hrs/year)",
+       x = "Labor Productivity ( usd/hr, log scale)", 
+       y = "Annual Working Hours( hrs/year)",
        caption = "Source : Our World in Data")
 
 print(figure_static)
@@ -117,7 +116,7 @@ figure <- plot_ly(
   ),
   text = ~paste0(
     "Country: ",          country,
-    "<br>Productivity: ", round(productivity, 1),"USD/hr",
+    "<br>Productivity: ", round(productivity, 1),"usd/hr",
     "<br>Workhour: ",     round(workhour, 1),"hrs/year",
     "<br>Population: ",   round(population / 1e6, 1), "M" 
   ),
@@ -126,8 +125,8 @@ figure <- plot_ly(
   layout(
     title  = list(text = "<b>Labor Productivity vs. Annual Working Hours</b>",
                   font = list(size = 15)),
-    xaxis  = list(title = "Labor Productivity (USD/hr, log scale)", type = "log"),
-    yaxis  = list(title = "Annual Working Hours(hrs)"),
+    xaxis  = list(title = "Labor Productivity ( usd/hr, log scale)", type = "log"),
+    yaxis  = list(title = "Annual Working Hours( hrs/year)"),
     legend = list(title = list(text = "Continent")),
     paper_bgcolor = "white",
     plot_bgcolor  = "#f9f9f9"

@@ -71,7 +71,6 @@ df <- dplyr::inner_join(x=productivity_workhour, y=population,
 # =============================================================================
 # 2. Creation of static plots with ggplot
 # =============================================================================
-```{r}
 #| label: static-plot
 #| echo: false
 #| message: false
@@ -127,7 +126,6 @@ figure_static
 # =============================================================================
 # 3. Creation of animated plots with plotly
 # =============================================================================
-```{r}
 #| label: animated-plot
 #| echo: false
 #| message: false

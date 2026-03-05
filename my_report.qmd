@@ -17,11 +17,8 @@ LUNETTE Malcom, HUANG Luxuan
 # 2 - Résultats
 
 ```{r}
-#| label: setup
-#| echo: false
 #| message: false
 #| warning: false
-
 # =============================================================================
 # 0. Package initialization and data download
 # =============================================================================
@@ -67,10 +64,8 @@ df <- dplyr::inner_join(x=productivity_workhour, y=population,
   dplyr::filter(n_distinct(continent) == 5) |>    # We only keep years where all 5 continents are represented
   dplyr::ungroup() |>
   dplyr::arrange(country, year) 
-
-# =============================================================================
-# 2. Creation of static plots with ggplot
-# =============================================================================
+```
+```{r}
 #| label: static-plot
 #| echo: false
 #| message: false
@@ -80,6 +75,9 @@ df <- dplyr::inner_join(x=productivity_workhour, y=population,
 #| out-width: "100%"
 #| dpi: 300
 
+# =============================================================================
+# 2. Creation of static plots with ggplot
+# =============================================================================
 figure_static <- df |>
   filter(year == 2023) |>                        
   arrange(desc(population)) |>
@@ -123,14 +121,16 @@ figure_static <- df |>
        caption = "Source : Our World in Data")
 
 figure_static
-# =============================================================================
-# 3. Creation of animated plots with plotly
-# =============================================================================
+```
+```{r}
 #| label: animated-plot
 #| echo: false
 #| message: false
 #| warning: false
 
+# =============================================================================
+# 3. Creation of animated plots with plotly
+# =============================================================================
 continent_colors <- c(
   "Africa"   = "#fc5173",
   "Americas" = "#fde803",

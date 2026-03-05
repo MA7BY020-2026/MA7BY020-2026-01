@@ -56,8 +56,13 @@ figure_static <- df |>
              size = population,
              label = country)) +                
   geom_point(alpha = 0.6, stroke = 1.0) +
-  geom_text_repel(aes(label = country),   
-                  size = 3, max.overlaps = 20) +
+  geom_text_repel(
+    data = ~ filter(.x, population > 5e7),  
+    aes(label = country),   
+    size = 3, 
+    max.overlaps = 20,
+    color = "#4A235A" 
+    )+
   scale_color_manual(values = c(
     "Africa"   = "#fc5173",
     "Americas" = "#fde803",
@@ -77,7 +82,7 @@ figure_static <- df |>
   ) +
   guides(
     color = guide_legend(title = "Continent", override.aes = list(size = 4)),
-    size  = guide_legend(title = "Population")
+    size  = "none"
   ) +
   labs(title = "Labor Productivity vs. Annual Working Hours (2023)",
        x = "Labor Productivity ( usd/hr, log scale)", 

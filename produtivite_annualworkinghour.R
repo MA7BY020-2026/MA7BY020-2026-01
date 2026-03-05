@@ -1,12 +1,14 @@
 # =============================================================================
 # 0. Package initialization and data download
 # =============================================================================
-library(dplyr)
-library(ggplot2)
-library(countrycode)
-library(gapminder)
-library(plotly)
-library(ggrepel)
+packages <- c("dplyr", "ggplot2", "plotly", "countrycode", "ggrepel")
+
+for (pkg in packages) {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    install.packages(pkg, dependencies = TRUE)
+  }
+  library(pkg, character.only = TRUE)
+}
 
 # Download and make a clean dataframe from ourworldindata's productivity data 
 url_productivity <- "https://ourworldindata.org/grapher/labor-productivity-per-hour-pennworldtable.csv?v=1&csvType=full&useColumnShortNames=true"

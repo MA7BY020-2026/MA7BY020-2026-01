@@ -94,6 +94,11 @@ print(figure_static)
 pop_min <- min(df$population)
 pop_max <- max(df$population)
 
+df_sorted <- df |>
+  arrange(year, desc(population)) |>
+  mutate(
+    bubble_size = 2 + (population - pop_min) / (pop_max - pop_min) * 56)
+
 figure <- plot_ly(
   data      = df_sorted,
   x         = ~productivity,

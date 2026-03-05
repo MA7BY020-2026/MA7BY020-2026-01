@@ -1,0 +1,33 @@
+---
+title: "test_quarto"
+format: html
+editor: visual
+---
+
+## Quarto
+
+这是啥？
+
+## Running Code
+
+我们来试试
+
+```{r}
+library(ggplot2)
+
+url_migrations <- "https://sdmx.oecd.org/public/rest/data/OECD.ELS.IMD,DSD_MIG_F@DF_MIG_POPF,1.0/AUT+BEL+CZE+DNK+EST+FIN+FRA+DEU+GRC+HUN+ISL+IRL+ITA+LVA+LTU+LUX+NLD+NOR+POL+PRT+SVK+SVN+ESP+SWE.CHN.A.._T...?startPeriod=2012&dimensionAtObservation=AllDimensions&format=csvfilewithlabels"
+migrations <-  read.csv(url_migrations) |> dplyr::select(Reference.area, TIME_PERIOD, OBS_VALUE) |> dplyr::rename(chinese_immigrants = OBS_VALUE, year = TIME_PERIOD, country = Reference.area)
+
+url_commerce <- "https://sdmx.oecd.org/public/rest/data/OECD.SDD.TPS,DSD_BIMTS@DF_BIMTS_CPA_2_1,1.1/AUT+BEL+CZE+DNK+EST+FIN+FRA+DEU+GRC+HUN+ISL+IRL+ITA+LVA+LTU+LUX+NLD+NOR+POL+PRT+SVK+SVN+ESP+SWE.CHN..C._T..A.USD_EXC.?startPeriod=2019&dimensionAtObservation=AllDimensions&format=csvfilewithlabels"
+commerce <-  read.csv(url_commerce) |> dplyr::select(Reference.area, TIME_PERIOD, OBS_VALUE) |> dplyr::rename(trade_with_china = OBS_VALUE, year = TIME_PERIOD, country = Reference.area)
+
+df <- dplyr::inner_join(x=migrations, y=commerce, by=dplyr::join_by(country, year))
+```
+
+```{r tables-mtcars}
+knitr::kable(df[1:5, ], caption = 'A caption')
+```
+
+# 家东西
+
+为看一看

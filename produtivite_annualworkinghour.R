@@ -81,8 +81,8 @@ figure_static <- df |>
     size  = guide_legend(title = "Population")
   ) +
   labs(title = "Labor Productivity vs. Annual Working Hours (2023)",
-       x = "Labor Productivity (log scale)",
-       y = "Annual Working Hours",
+       x = "Labor Productivity (USD/hr, log scale)", 
+       y = "Annual Working Hours(hrs/year)",
        caption = "Source : Our World in Data")
 
 print(figure_static)
@@ -90,49 +90,45 @@ print(figure_static)
 # =============================================================================
 # 3. Creation of animated plots with plotly
 # =============================================================================
-# We make the animation
-figure <- df |>
-  arrange(year, desc(population)) |> 
-  ggplot(aes(x = productivity, 
-             y = workhour, 
-             color = continent,
-             size = population,   
-             text = paste(
-               "Country:", country,
-               "Productivity:", productivity,
-               "Workhour:", workhour,
-               "Population:", population),
-             frame = year,
-             ids = country,
-             group = country)) +
-  geom_point(alpha = 0.6, stroke = 1.0) +   
-  scale_color_manual(values = c(
-    "Africa"   = "#fc5173",  
-    "Americas" = "#fde803",  
-    "Asia"     = "#01d4e5",  
-    "Europe"   = "#7dea01",  
-    "Oceania"  = "#9B6BB5"
-  )) +
-  scale_size_area(
-    max_size = 28,
-    labels = scales::label_number(scale = 1/1e6, suffix = "B")
-  ) +
-  scale_x_log10() + 
-  theme_minimal(base_size = 13) +
-  theme(
-  legend.position = "right",
-  plot.title = element_text(face = "bold", size = 15)
-  ) +
-  guides(
-    color = guide_legend(title = "Continent", override.aes = list(size = 4)),
-    size  = guide_legend(title = "Population")
-  )+
-  labs(title = "Labor Productivity vs. Annual Working Hours",
-    x = "Labor Productivity (log scale)",
-    y = "Annual Working Hours")
+# 
+pop_min <- min(df$population)
+pop_max <- max(df$population)
 
-figure_interactive <- ggplotly(figure, tooltip = "text") |>
+figure <- plot_ly(
+  data      = df_sorted,
+  x         = ~productivity,
+  y         = ~workhour,
+  size      = ~bubble_size,      
+  color     = ~continent,
+  colors    = continent_colors,
+  frame     = ~year,
+  ids       = ~country,
+  type      = "scatter",
+  mode      = "markers",
+  marker    = list(
+    opacity  = 0.6,
+    sizemode = "diameter",      
+    sizeref  = 1                 
+  ),
+  text = ~paste0(
+    "Country: ",          country,
+    "<br>Productivity: ", round(productivity, 1),"USD/hr",
+    "<br>Workhour: ",     round(workhour, 1),"hrs/year",
+    "<br>Population: ",   round(population / 1e6, 1), "M" 
+  ),
+  hoverinfo = "text"
+) |>
   layout(
-    legend = list(title = list(text = "Continent"))  
-  )
-print(figure_interactive)
+    title  = list(text = "<b>Labor Productivity vs. Annual Working Hours</b>",
+                  font = list(size = 15)),
+    xaxis  = list(title = "Labor Productivity (USD/hr, log scale)", type = "log"),
+    yaxis  = list(title = "Annual Working Hours(hrs)"),
+    legend = list(title = list(text = "Continent")),
+    paper_bgcolor = "white",
+    plot_bgcolor  = "#f9f9f9"
+  ) |>
+  animation_opts(frame = 800, easing = "linear", redraw = FALSE) |>
+  animation_slider(currentvalue = list(prefix = "Year: ", font = list(size = 13))) |>
+  animation_button(x = 0, xanchor = "right", y = 0, yanchor = "top")
+
+print(figure)

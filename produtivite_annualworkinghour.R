@@ -90,6 +90,13 @@ print(figure_static)
 # 3. Creation of animated plots with plotly
 # =============================================================================
 # 
+continent_colors <- c(
+  "Africa"   = "#fc5173",
+  "Americas" = "#fde803",
+  "Asia"     = "#01d4e5",
+  "Europe"   = "#7dea01",
+  "Oceania"  = "#9B6BB5"
+)
 pop_min <- min(df$population)
 pop_max <- max(df$population)
 

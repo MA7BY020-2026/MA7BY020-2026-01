@@ -97,7 +97,7 @@ df <- dplyr::inner_join(x=productivity_workhour, y=population,
 
 Tableau
 ```{r tables-mtcars}
-knitr::kable(filter(df, year == 2019)[, ], caption = 'Donnees brutes pour 2019')
+knitr::kable(filter(df, year == 2019)[, ], caption = 'Donnees brutes pour 2019 (productivite en USD/h ; workhour in h/year/worker)')
 ```
 
 ```{r}

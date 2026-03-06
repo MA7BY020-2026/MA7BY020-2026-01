@@ -127,11 +127,18 @@ stats_full <- df |>
   arrange(desc(prod_moy))
 
 knitr::kable(stats_full, 
-  col.names = c("Continent", "Heures/an", "Prod. ($/h)", "Corrélation [-1:1]", "Nb pays")
+  col.names = c("Continent","Nb de pays","Productivité moyenne ($/h)","Nombre d'heures moyen/an","Corrélation [-1:1]")
 )
 ```
+#### Analyse des résultats statistiques
 <p style="text-align:justify;">
-Les continents se distinguent...
+**Europe/Océanie** affichent une forte corrélation négative (-0.75, -0.96) : les pays réduisant leurs heures gagnent en productivité (tertiarisation, capital humain). 
+
+**L'Asie** présente une corrélation quasi-nulle (-0.02), reflétant son hétérogénéité extrême : Singapour (2371h, 85\$/h) et le Japon (1598h, 52\$/h) coexistent avec l'Inde (2605h, 7\$/h) et la Chine (2357h, 14\$/h), annulant tout pattern global.
+
+**L'Afrique** montre une corrélation positive (+0.42) : dans les économies à dominante agricole et informelle, accroître le volume horaire reste associé à des gains de productivité, faute de mécanisation et de capital suffisants.
+
+Ces trois groupes présentent ainsi des 'tendances' différentes, qui s'expriment visuellement par le graphique suivant.
 </p>
 ## Graphique statique : 
 ```{r}
@@ -196,10 +203,12 @@ figure_static
 
 #### \[Analyse statique par continent 2019\]
 <p style="text-align:justify;">
+  Comme nous l'avons vu dans un premier temps avec le tableau des corrélations, on peut distinguer trois types de comportements relatifs aux différents continents. On voit bien l'Asie s'équilibrant avec des foyers de population volumineux comme les indiens et les chinois, travaillant beaucoup d'heures mais produisant peu par heure (on notera que le PIB total n'est pas traduit ici : la Chine avec une très grande population, même en produisant peu, parvient à isser son PIB total dans les premiers rangs du classement mondial), et pour d'autres pays, moins peuplés, ont une très grande productivité pour un nombre d'heures travaillées beaucoup plus faible. Ce deuxième groupe de pays asiatiques suit la tendance des pays occidentaux, puisque l'Europe et l'Océanie, suivis de près par l'Amérique, montre une efficience des plus élevées. L'Afrique, quant à elle, a tendance à voir sa productivité s'élever à mesure que le nombre d'heures de travail augmente.\ </p>
+<p style="text-align:justify;">
+  Pour ce graphique, nous avons choisi d'exprimer la productivité (en abcisses) sur une échelle logarithmique, pour... \
+  
 -   Echelle log
-
 -   Grosse efficience européenne (en tête, juste devant l'Amérique) VS Afrique ?
-
 -   Gros volume asiatique
 </p>
 ## Animation

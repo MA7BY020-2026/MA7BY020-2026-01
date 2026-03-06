@@ -99,7 +99,7 @@ df <- dplyr::inner_join(x=productivity_workhour, y=population,
 
 ```
 
-## Tableau : l'ensemble des pays analysés entre 2001 et 2023
+## Tableau : l'ensemble des pays sur analysés de 2019
 
 ```{r tables-mtcars}
 knitr::kable(filter(df, year == 2019)[, ], caption = 'Donnees brutes pour 2019 (productivite en USD/h ; workhour in h/year/worker)')
@@ -161,10 +161,8 @@ figure_static <- df |>
              y = workhour,
              color = continent,
              size = population,
-             label = country,
-             )) +                
-  geom_point(aes(alpha = log10(population)), stroke = 0.9) +
-  scale_alpha_continuous(range = c(0.7, 0.15), guide = "none") +
+             label = country)) +                
+  geom_point(alpha = 0.6, stroke = 1.0) +
   geom_text_repel(
     data = ~ filter(.x, population > 5e7),  
     aes(label = country),   
@@ -199,6 +197,7 @@ figure_static <- df |>
        caption = "Source : Our World in Data")
 
 figure_static
+
 ```
 
 #### \[Analyse statique par continent 2019\]

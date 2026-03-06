@@ -1,5 +1,5 @@
 ---
-title: "Projet AED : Productivité horaire du travail VS Nombre d'heures travaillées"
+title: "Project d'analyse des donnes"
 format: 
   html:
     self-contained: true
@@ -95,6 +95,11 @@ df <- dplyr::inner_join(x=productivity_workhour, y=population,
   dplyr::arrange(country, year) 
 ```
 
+Tableau
+```{r tables-mtcars}
+knitr::kable(filter(df, year == 2019)[, ], caption = 'Donnees brutes pour 2019')
+```
+
 ```{r}
 #| label: static-plot
 #| echo: false
@@ -131,7 +136,7 @@ figure_static <- df |>
     "Americas" = "#00d600",
     "Asia"     = "#d10202",
     "Europe"   = "#003399",
-    "Oceania"  = "#A800FF"
+    "Oceania"  = "#9B6BB5"
   )) +
   scale_size_area(
     max_size = 28,
@@ -173,10 +178,10 @@ figure_static
 # 3. Creation of animated plots with plotly
 # =============================================================================
 continent_colors <- c(
-  "Africa"   = "#fcd421",
-  "Americas" = "#00d600",
-  "Asia"     = "#d10202",
-  "Europe"   = "#003399",
+  "Africa"   = "#fc5173",
+  "Americas" = "#fde803",
+  "Asia"     = "#01d4e5",
+  "Europe"   = "#7dea01",
   "Oceania"  = "#9B6BB5"
 )
 pop_min <- min(df$population)

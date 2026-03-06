@@ -1,5 +1,5 @@
 ---
-title: "Project d'analyse des donnes"
+title: "Projet AED : Productivité horaire du travail VS Nombre d'heures travaillées"
 format: 
   html:
     self-contained: true
@@ -131,7 +131,7 @@ figure_static <- df |>
     "Americas" = "#00d600",
     "Asia"     = "#d10202",
     "Europe"   = "#003399",
-    "Oceania"  = "#9B6BB5"
+    "Oceania"  = "#A800FF"
   )) +
   scale_size_area(
     max_size = 28,
@@ -173,10 +173,10 @@ figure_static
 # 3. Creation of animated plots with plotly
 # =============================================================================
 continent_colors <- c(
-  "Africa"   = "#fc5173",
-  "Americas" = "#fde803",
-  "Asia"     = "#01d4e5",
-  "Europe"   = "#7dea01",
+  "Africa"   = "#fcd421",
+  "Americas" = "#00d600",
+  "Asia"     = "#d10202",
+  "Europe"   = "#003399",
   "Oceania"  = "#9B6BB5"
 )
 pop_min <- min(df$population)

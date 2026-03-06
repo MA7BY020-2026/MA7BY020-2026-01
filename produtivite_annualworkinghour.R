@@ -110,6 +110,8 @@ df_sorted <- df |>
   mutate(
     bubble_size = 2 + (population - pop_min) / (pop_max - pop_min) * 56)
 
+df_labels <- df_sorted |> filter(population > 7e7)
+
 figure <- plot_ly(
   data      = df_sorted,
   x         = ~productivity,
@@ -133,7 +135,20 @@ figure <- plot_ly(
     "<br>Population: ",   round(population / 1e6, 1), "M" 
   ),
   hoverinfo = "text"
-) |>
+   ) |>
+  add_text(
+    data         = df_labels,       
+    x            = ~productivity,   
+    y            = ~workhour,       
+    frame        = ~year,
+    ids          = ~country,
+    text         = ~country,
+    textposition = "top center",
+    textfont     = list(color = "#4A235A", size = 10),
+    hoverinfo    = "skip",
+    showlegend   = FALSE,
+    inherit      = FALSE
+  ) |>
   layout(
     title  = list(text = "<b>Labor Productivity vs. Annual Working Hours</b>",
                   font = list(size = 15)),

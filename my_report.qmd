@@ -1,5 +1,5 @@
 ---
-title: "Project d'analyse des donnes"
+title: "Projet AED : Productivité horaire du travail VS Nombre d'heures travaillées"
 format: 
   html:
     self-contained: true
@@ -10,21 +10,22 @@ execute:
 
 LUNETTE Malcom, HUANG Luxuan
 
-## Report: Project 1
+## Rapport
 
 # 1 - Introduction
 
-### Contexte et Motivation
-
+#### Contexte et Motivation
+<p style="text-align:justify;">
 Intuitivement, nous pourrions penser que travailler plus d'heures rend un pays plus productif. Pourtant, nous constatons une relation paradoxale : en 2019, les données observées nous montrent que les français ont travaillé (en moyenne, par personne) 1504 heures pour produire 80\$ par heures travaillées, tandis que l'Allemagne, au même moment, a travaillé seulement 1372 heures pour produire 81\$ par heures travaillées : pour une productivité équivalente, les Allemands travaillent 9% d'heures en moins. Ce constat nous a fait soulever la question suivante : le volume de travail détermine-t-il la productivité horaire ?
+</p>
 
-### Définitions
-
-En économie, la productivité est définie par le rapport entre la production (*output*) et les facteurs utilisés lors du processus de production (*input*). Parmi ces facteurs de production, on compte le capital (les biens durables utilisés dans la production), et le travail (l'effort humain consacré à la production). C'est le travail qui nous intéresse ici, en particulier la productivité horaire du travail, définie comme suit : Productivité horaire du travail = \dfrac{PIB\ total}{Nombre\ total\ d'heures\ travaillées} .\
+#### Définitions
+<p style="text-align:justify;">
+En économie, la productivité est définie par le rapport entre la production (*output*) et les facteurs utilisés lors du processus de production (*input*). Parmi ces facteurs de production, on compte le capital (les biens durables utilisés dans la production), et le travail (l'effort humain consacré à la production). C'est le travail qui nous intéresse ici, en particulier la productivité horaire du travail, définie comme suit : $Productivité\ horaire\ du\ travail\ = \dfrac{PIB\ total}{Nombre\ total\ d'heures\ travaillées}$ .\
 Cette métrique est exprimée en dollars par heure (\$/h), et nous permet de comparer la productivité des pays entre eux, indépendamment de la taille de leur population, et de leur économie.
-
-### Données
-
+</p>
+#### Données
+<p style="text-align:justify;">
 Notre analyse mobilise les données extraites du site Our World in Data, produites par Penn World Table 11.0, couvrant 129 pays entre 1950 et 2023. Les variables retenues sont :
 
 -   **Productivité horaire** : PIB par heures travaillées, exprimée en dollars internationaux 2021 en parité de pouvoir d'achat (PPA), permettant la comparabilité internationale,
@@ -32,10 +33,12 @@ Notre analyse mobilise les données extraites du site Our World in Data, produit
 -   **Heures travaillées** : Moyenne annuelle par travailleur actif,
 
 -   **Population** : Utilisée comme pondération dans les visualisations.
+</p>
 
-### Limitations identifiées
-
+#### Limitations identifiées
+<p style="text-align:justify;">
 Les données africaines ne débutent qu'en 2001, contre 1950 pour les autres continents. Cette asymétrie temporelle impose un choix méthodologique : nous concentrons l'analyse comparative sur la période 2001-2023, permettant d'inclure l'Afrique tout en conservant une profondeur historique suffisante.
+</p>
 
 # 2 - Résultats
 
@@ -93,13 +96,44 @@ df <- dplyr::inner_join(x=productivity_workhour, y=population,
   dplyr::filter(n_distinct(continent) == 5) |>    # We only keep years where all 5 continents are represented
   dplyr::ungroup() |>
   dplyr::arrange(country, year) 
+
 ```
 
-Tableau
+## Tableau : l'ensemble des pays analysés entre 2001 et 2023
+
 ```{r tables-mtcars}
 knitr::kable(filter(df, year == 2019)[, ], caption = 'Donnees brutes pour 2019 (productivite en USD/h ; workhour in h/year/worker)')
 ```
 
+## Statistiques descriptives
+
+
+**Moyennes et corrélations par continent (2001-2023) :**
+```{r}
+#| label: stats
+#| echo: false
+
+stats_full <- df |>
+  group_by(continent) |> 
+  summarise(
+    nb_pays = n_distinct(country),
+    prod_moy = round(mean(productivity), 1),
+    heures_moy = round(mean(workhour), 0),
+    prod_moy = round(mean(productivity), 1),
+    correlation = round(cor(workhour, productivity), 2),
+    
+    .groups = "drop"
+  ) |> 
+  arrange(desc(prod_moy))
+
+knitr::kable(stats_full, 
+  col.names = c("Continent", "Heures/an", "Prod. ($/h)", "Corrélation [-1:1]", "Nb pays")
+)
+```
+<p style="text-align:justify;">
+Les continents se distinguent...
+</p>
+## Graphique statique : 
 ```{r}
 #| label: static-plot
 #| echo: false
@@ -136,7 +170,7 @@ figure_static <- df |>
     "Americas" = "#00d600",
     "Asia"     = "#d10202",
     "Europe"   = "#003399",
-    "Oceania"  = "#9B6BB5"
+    "Oceania"  = "#A800FF"
   )) +
   scale_size_area(
     max_size = 28,
@@ -160,14 +194,15 @@ figure_static <- df |>
 figure_static
 ```
 
-### \[Analyse statique par continent 2019\]
-
+#### \[Analyse statique par continent 2019\]
+<p style="text-align:justify;">
 -   Echelle log
 
 -   Grosse efficience européenne (en tête, juste devant l'Amérique) VS Afrique ?
 
 -   Gros volume asiatique
-
+</p>
+## Animation
 ```{r}
 #| label: animated-plot
 #| echo: false
@@ -178,11 +213,11 @@ figure_static
 # 3. Creation of animated plots with plotly
 # =============================================================================
 continent_colors <- c(
-  "Africa"   = "#fc5173",
-  "Americas" = "#fde803",
-  "Asia"     = "#01d4e5",
-  "Europe"   = "#7dea01",
-  "Oceania"  = "#9B6BB5"
+  "Africa"   = "#fcd421",
+  "Americas" = "#00d600",
+  "Asia"     = "#d10202",
+  "Europe"   = "#003399",
+  "Oceania"  = "#A800FF"
 )
 pop_min <- min(df$population)
 pop_max <- max(df$population)
@@ -232,15 +267,15 @@ figure <- plot_ly(
 figure
 ```
 
-### \[Analyse animation 2001-2023\]
-
+#### \[Analyse animation 2001-2023\]
+<p style="text-align:justify;">
 -   Rétrogradation globale au moment du Covid (sur le nombre d'heures travaillées, mais pas sur la productivité ?)
 
 -   Augmentation globale de la productivité (grosses avancées Chine +400% en gardant env le même nombre d'heures de travail : augmentation de l'efficience) sur l'intégralité de la période
 
 -   Afrique : augmentation travail (lent) + augmentation productivité (+rapide) ?
-
-## Appendix: All code
+</p>
+# Appendince : Code complet
 
 ```{r ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
 ```

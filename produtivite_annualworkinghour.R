@@ -12,15 +12,21 @@ for (pkg in packages) {
 
 # Download and make a clean dataframe from ourworldindata's productivity data 
 url_productivity <- "https://ourworldindata.org/grapher/labor-productivity-per-hour-pennworldtable.csv?v=1&csvType=full&useColumnShortNames=true"
-productivity <-  read.csv(url_productivity) |> dplyr::select(entity, year,productivity) |> dplyr::rename(country = entity)
+productivity <-  read.csv(url_productivity) |> 
+  dplyr::select(entity, year,productivity) |> 
+  dplyr::rename(country = entity)
 
 # Same with working hours data
 url_workhour <- "https://ourworldindata.org/grapher/annual-working-hours-per-worker.csv?v=1&csvType=full&useColumnShortNames=true"
-workhour <-read.csv(url_workhour) |> dplyr::select(entity, year,working_hours_omm) |> dplyr::rename(country = entity, workhour = working_hours_omm)
+workhour <-read.csv(url_workhour) |>
+  dplyr::select(entity, year,working_hours_omm) |> 
+  dplyr::rename(country = entity, workhour = working_hours_omm)
 
 # Same with population data
 url_population <- "https://ourworldindata.org/grapher/population.csv?v=1&csvType=full&useColumnShortNames=true"
-population <-  read.csv(url_population) |> dplyr::select(entity, year,population_historical) |> dplyr::rename(country = entity, population = population_historical)
+population <-  read.csv(url_population) |> 
+  dplyr::select(entity, year,population_historical) |> 
+  dplyr::rename(country = entity, population = population_historical)
 # Now we have three datasets
 
 # =============================================================================
@@ -35,40 +41,59 @@ productivity_workhour <- dplyr::inner_join(x=productivity, y=workhour, by=dplyr:
 # We also use the countrycode library to add a column with continent of each observation (to make the figure more beautiful)
 df <- dplyr::inner_join(x=productivity_workhour, y=population, 
                         by=dplyr::join_by(country, year)) |>
-     dplyr::mutate(
-     continent = countrycode(country, origin = "country.name", destination = "continent")
-     ) |>
-     dplyr::filter(!is.na(continent)) |>           
-     dplyr::group_by(year) |>
-     dplyr::filter(n_distinct(continent) == 5) |>    # We only keep years where all 5 continents are represented
-     dplyr::ungroup() |>
-     dplyr::arrange(country, year) 
+  dplyr::mutate(
+    continent = countrycode(country, origin = "country.name", destination = "continent")
+  ) |>
+  dplyr::filter(!is.na(continent)) |>           
+  dplyr::group_by(year) |>
+  dplyr::filter(n_distinct(continent) == 5) |>    # We only keep years where all 5 continents are represented
+  dplyr::ungroup() |>
+  dplyr::arrange(country, year) 
 
+knitr::kable(filter(df, year == 2019)[, ], caption = 'Donnees brutes pour 2019 (productivite en USD/h ; workhour in h/year/worker)')
+stats_full <- df |>
+  group_by(continent) |> 
+  summarise(
+    nb_pays = n_distinct(country),
+    prod_moy = round(mean(productivity), 1),
+    heures_moy = round(mean(workhour), 0),
+    prod_moy = round(mean(productivity), 1),
+    correlation = round(cor(workhour, productivity), 2),
+    
+    .groups = "drop"
+  ) |> 
+  arrange(desc(prod_moy))
+
+knitr::kable(stats_full, 
+             col.names = c("Continent","Nb de pays","Productivité moyenne ($/h)","Nombre d'heures moyen/an","Corrélation [-1:1]")
+)
 # =============================================================================
 # 2. Creation of static plots with ggplot
 # =============================================================================
 figure_static <- df |>
-  filter(year == 2023) |>                        
+  filter(year == 2019) |>                        
   arrange(desc(population)) |>
   ggplot(aes(x = productivity,
              y = workhour,
              color = continent,
              size = population,
-             label = country)) +                
-  geom_point(alpha = 0.6, stroke = 1.0) +
+             label = country,
+  )) +                
+  geom_point(aes(alpha = log10(population)), stroke = 0.9) +
+  scale_alpha_continuous(range = c(0.7, 0.15), guide = "none") +
   geom_text_repel(
     data = ~ filter(.x, population > 5e7),  
     aes(label = country),   
     size = 3, 
     max.overlaps = 20,
     color = "#4A235A" 
-    )+
+  )+
   scale_color_manual(values = c(
-    "Africa"   = "#fc5173",
-    "Americas" = "#fde803",
-    "Asia"     = "#01d4e5",
-    "Europe"   = "#7dea01",
-    "Oceania"  = "#9B6BB5"
+    "Africa"   = "#fcd421",
+    "Americas" = "#00d600",
+    "Asia"     = "#d10202",
+    "Europe"   = "#003399",
+    "Oceania"  = "#A800FF"
   )) +
   scale_size_area(
     max_size = 28,
@@ -84,23 +109,21 @@ figure_static <- df |>
     color = guide_legend(title = "Continent", override.aes = list(size = 4)),
     size  = "none"
   ) +
-  labs(title = "Labor Productivity vs. Annual Working Hours (2023)",
+  labs(title = "Labor Productivity vs. Annual Working Hours (2019)",
        x = "Labor Productivity ( usd/hr, log scale)", 
        y = "Annual Working Hours( hrs/year)",
        caption = "Source : Our World in Data")
 
-print(figure_static)
-
+figure_static
 # =============================================================================
 # 3. Creation of animated plots with plotly
 # =============================================================================
-# 
 continent_colors <- c(
-  "Africa"   = "#fc5173",
-  "Americas" = "#fde803",
-  "Asia"     = "#01d4e5",
-  "Europe"   = "#7dea01",
-  "Oceania"  = "#9B6BB5"
+  "Africa"   = "#fcd421",
+  "Americas" = "#00d600",
+  "Asia"     = "#d10202",
+  "Europe"   = "#003399",
+  "Oceania"  = "#A800FF"
 )
 pop_min <- min(df$population)
 pop_max <- max(df$population)
@@ -147,4 +170,4 @@ figure <- plot_ly(
   animation_slider(currentvalue = list(prefix = "Year: ", font = list(size = 13))) |>
   animation_button(x = 0, xanchor = "right", y = 0, yanchor = "top")
 
-print(figure)
+figure

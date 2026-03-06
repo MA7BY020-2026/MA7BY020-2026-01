@@ -115,8 +115,10 @@ figure_static <- df |>
              y = workhour,
              color = continent,
              size = population,
-             label = country)) +                
-  geom_point(alpha = 0.6, stroke = 1.0) +
+             label = country,
+             )) +                
+  geom_point(aes(alpha = log10(population)), stroke = 0.9) +
+  scale_alpha_continuous(range = c(0.7, 0.15), guide = "none") +
   geom_text_repel(
     data = ~ filter(.x, population > 5e7),  
     aes(label = country),   
@@ -125,10 +127,10 @@ figure_static <- df |>
     color = "#4A235A" 
     )+
   scale_color_manual(values = c(
-    "Africa"   = "#fc5173",
-    "Americas" = "#fde803",
-    "Asia"     = "#01d4e5",
-    "Europe"   = "#7dea01",
+    "Africa"   = "#fcd421",
+    "Americas" = "#00d600",
+    "Asia"     = "#d10202",
+    "Europe"   = "#003399",
     "Oceania"  = "#9B6BB5"
   )) +
   scale_size_area(

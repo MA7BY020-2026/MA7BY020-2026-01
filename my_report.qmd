@@ -37,7 +37,7 @@ Notre analyse mobilise les données extraites du site Our World in Data, produit
 
 #### Limitations identifiées
 <p style="text-align:justify;">
-Les données africaines ne débutent qu'en 2001, contre 1950 pour les autres continents. Cette asymétrie temporelle impose un choix méthodologique : nous concentrons l'analyse comparative sur la période 2001-2023, permettant d'inclure l'Afrique tout en conservant une profondeur historique suffisante.
+Les données africaines ne débutent qu'en 2001, contre 1950 pour les autres continents. Dans un souci méthodologique, nous avons choisi de concentrer l'analyse comparative sur la période 2001-2023, permettant d'inclure l'Afrique tout en conservant une profondeur historique suffisante.
 </p>
 
 # 2 - Résultats
@@ -99,7 +99,7 @@ df <- dplyr::inner_join(x=productivity_workhour, y=population,
 
 ```
 
-## Tableau : l'ensemble des pays sur analysés de 2019
+## Tableau : l'ensemble des pays analysés en 2019
 
 ```{r tables-mtcars}
 knitr::kable(filter(df, year == 2019)[, ], caption = 'Donnees brutes pour 2019 (productivite en USD/h ; workhour in h/year/worker)')
@@ -119,9 +119,7 @@ stats_full <- df |>
     nb_pays = n_distinct(country),
     prod_moy = round(mean(productivity), 1),
     heures_moy = round(mean(workhour), 0),
-    prod_moy = round(mean(productivity), 1),
     correlation = round(cor(workhour, productivity), 2),
-    
     .groups = "drop"
   ) |> 
   arrange(desc(prod_moy))
@@ -131,15 +129,18 @@ knitr::kable(stats_full,
 )
 ```
 #### Analyse des résultats statistiques
-<p style="text-align:justify;">
-**Europe/Océanie** affichent une forte corrélation négative (-0.75, -0.96) : les pays réduisant leurs heures gagnent en productivité (tertiarisation, capital humain). 
+  Les corrélations sont calculées en agrégeant l'ensemble des observations (pays × années) de chaque continent sur 2001-2023. Elles reflètent à la fois les différences structurelles entre pays et les évolutions temporelles, sans distinguer les deux effets.  Le choix de considérer les *données poolées*^[**Données poolées :** Données agrégées pour être analysées ensemble. Ici, le coefficient de corrélation est calculé pour chaque continent à partir de l'ensemble des données relatives au continent considéré. On y agrège donc, par continent, les données (productivité et heures travaillées) de tous les pays et de toutes les années confondus.] a été fait pour observer les tendances générales des continents.
 
-**L'Asie** présente une corrélation quasi-nulle (-0.02), reflétant son hétérogénéité extrême : Singapour (2371h, 85\$/h) et le Japon (1598h, 52\$/h) coexistent avec l'Inde (2605h, 7\$/h) et la Chine (2357h, 14\$/h), annulant tout pattern global.
+**Europe/Océanie** affichent une forte corrélation négative (-0.75, -0.96), suivies de près par les **Amériques** (-0.53): les pays travaillant moins d'heures tendent à afficher une productivité plus élevée.
 
-**L'Afrique** montre une corrélation positive (+0.42) : dans les économies à dominante agricole et informelle, accroître le volume horaire reste associé à des gains de productivité, faute de mécanisation et de capital suffisants.
+**L'Asie** présente une corrélation quasi-nulle (-0.02), reflétant une grande hétérogénéité : on observe conjointement des pays travaillant beaucoup d'heures et produisant peu, et des pays avec une grande productivité dont le temps de travail est plus faible. Par exemple, en 2019, Singapour (2330h, 62\$/h) et le Japon (1687h, 49\$/h) coexistent avec l'Inde (2605h, 7\$/h) et la Chine (2357h, 14\$/h). Cette hétérogénéité annule tout pattern général.
 
-Ces trois groupes présentent ainsi des 'tendances' différentes, qui s'expriment visuellement par le graphique suivant.
-</p>
+**L'Afrique** montre une corrélation positive (+0.42) : l'accroîssement du volume horaire s'associe à des gains de productivité, pattern inverse de celui observé en Europe.
+
+Ces trois groupes présentent ainsi des tendances différentes, qui s'expriment visuellement par le graphique suivant.
+
+
+
 ## Graphique statique : 
 ```{r}
 #| label: static-plot
@@ -201,7 +202,7 @@ figure_static
 
 #### \[Analyse statique par continent 2019\]
 <p style="text-align:justify;">
-  Comme nous l'avons vu dans un premier temps avec le tableau des corrélations, on peut distinguer trois types de comportements relatifs aux différents continents. On voit bien l'Asie s'équilibrant avec des foyers de population volumineux comme les indiens et les chinois, travaillant beaucoup d'heures mais produisant peu par heure (on notera que le PIB total n'est pas traduit ici : la Chine avec une très grande population, même en produisant peu, parvient à isser son PIB total dans les premiers rangs du classement mondial), et pour d'autres pays, moins peuplés, ont une très grande productivité pour un nombre d'heures travaillées beaucoup plus faible. Ce deuxième groupe de pays asiatiques suit la tendance des pays occidentaux, puisque l'Europe et l'Océanie, suivis de près par l'Amérique, montre une efficience des plus élevées. L'Afrique, quant à elle, a tendance à voir sa productivité s'élever à mesure que le nombre d'heures de travail augmente.\ </p>
+  Comme nous l'avons vu dans un premier temps avec le tableau des corrélations, on peut distinguer trois types de comportements relatifs aux différents continents. On voit bien l'Asie s'équilibrant avec des foyers de population volumineux comme les indiens et les chinois, travaillant beaucoup d'heures mais produisant peu par heure (on notera que le PIB total n'est pas traduit ici : la Chine avec une très grande population, même en produisant peu, parvient à hisser son PIB total dans les premiers rangs du classement mondial), et pour d'autres pays, moins peuplés, ont une très grande productivité pour un nombre d'heures travaillées beaucoup plus faible. Ce deuxième groupe de pays asiatiques suit la tendance des pays occidentaux, puisque l'Europe et l'Océanie, suivis de près par l'Amérique, montre une efficience des plus élevées. L'Afrique, quant à elle, a tendance à voir sa productivité s'élever à mesure que le nombre d'heures de travail augmente.\ </p>
 <p style="text-align:justify;">
   Pour ce graphique, nous avons choisi d'exprimer la productivité (en abcisses) sur une échelle logarithmique, pour... \
   

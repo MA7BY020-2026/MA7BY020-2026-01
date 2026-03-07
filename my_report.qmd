@@ -42,7 +42,7 @@ Notre analyse mobilise les données extraites du site Our World in Data, produit
 Les données africaines ne débutent qu'en 2001, contre 1950 pour les autres continents. Dans un souci méthodologique, nous avons choisi de concentrer l'analyse comparative sur la période 2001-2023, permettant d'inclure l'Afrique tout en conservant une profondeur historique suffisante.
 
 
-# 2 - Résultats
+
 
 ```{r}
 #| message: false
@@ -101,11 +101,19 @@ df <- dplyr::inner_join(x=productivity_workhour, y=population,
 
 ```
 
-## Tableau : l'ensemble des pays analysés en 2019
+## Tableau : echantillon partiel des pays analysés en 2019
 
 ```{r tables-mtcars}
-knitr::kable(filter(df, year == 2019)[, ], caption = 'Donnees brutes pour 2019 (productivite en USD/h ; workhour in h/year/worker)')
+# Tableau : echantillon partiel des pays analysés en 2019
+knitr::kable(filter(df, year == 2019, country %in% c(
+    "China", "Japan", "Singapore",
+    "United States", "Mexico",
+    "India", "Congo", "Nigeria",
+    "Brazil", "France", "Germany", "Australia"
+    )) [, ], caption = 'Donnees brutes pour 2019 (productivite en USD/h ; workhour in h/year/worker)')
 ```
+
+# 2 - Résultats
 
 ## Statistiques descriptives
 
@@ -115,7 +123,8 @@ knitr::kable(filter(df, year == 2019)[, ], caption = 'Donnees brutes pour 2019 (
 #| label: stats
 #| echo: false
 
-stats_full <- df |>
+#Moyennes et corrélations par continent (2001-2023) 
+knitr::kable(stats_full <- df |>
   group_by(continent) |> 
   summarise(
     nb_pays = n_distinct(country),
@@ -124,13 +133,12 @@ stats_full <- df |>
     correlation = round(cor(workhour, productivity), 2),
     .groups = "drop"
   ) |> 
-  arrange(desc(prod_moy))
-
-knitr::kable(stats_full, 
-  col.names = c("Continent","Nb de pays","Productivité moyenne ($/h)","Nombre d'heures moyen/an","Corrélation [-1:1]")
+  arrange(desc(prod_moy)), 
+  col.names = c("Continent","Nb de pays","Productivité moyenne ($/h)","Nombre d'heures moyen/an","Corrélation")
 )
 
 ```
+
 #### Analyse des résultats statistiques
   Les corrélations sont calculées en agrégeant l'ensemble des observations (pays × années) de chaque continent sur 2001-2023. Elles reflètent à la fois les différences structurelles entre pays et les évolutions temporelles, sans distinguer les deux effets.  Le choix de considérer les *données poolées*^[**Données poolées :** Données agrégées pour être analysées ensemble. Ici, le coefficient de corrélation est calculé pour chaque continent à partir de l'ensemble des données relatives au continent considéré. On y agrège donc, par continent, les données (productivité et heures travaillées) de tous les pays et de toutes les années confondus.] a été fait pour observer les tendances générales des continents.
 
@@ -155,9 +163,11 @@ Ces trois groupes présentent ainsi des tendances différentes, qui s'expriment 
 #| out-width: "100%"
 #| dpi: 300
 
+
 # =============================================================================
 # 2. Creation of static plots with ggplot
 # =============================================================================
+
 figure_static <- df |>
   filter(year == 2019) |>                        
   arrange(desc(population)) |>
@@ -168,7 +178,11 @@ figure_static <- df |>
              label = country)) +                
   geom_point(alpha = 0.6, stroke = 1.0) +
   geom_text_repel(
-    data = ~ filter(.x, population > 5e7),  
+    data = ~ filter (.x, country %in% c(
+      "China", "Japan", "Singapore", 
+      "United States", "Mexico",
+      "India", "Congo","Nigeria",
+      "Brazil", "France", "Germany","Australia")),  # We only display part of the countries 
     aes(label = country),   
     size = 3, 
     max.overlaps = 20,
@@ -203,6 +217,7 @@ figure_static
 
 ```
 
+<<<<<<< HEAD
 #### Analyse par continent
 
 Le graphique confirme visuellement les trois patterns identifiés statistiquement.
@@ -216,6 +231,18 @@ Nous utilisons l'échelle logarithmique pour la productivité pour tenir compte 
 
 **L'Afrique** se concentre dans la zone faible productivité (5-25\$/h) / volume élevé (1600-2700h).
 
+=======
+#### \[Analyse statique par continent 2019\]
+<p style="text-align:justify;">
+  Comme nous l'avons vu dans un premier temps avec le tableau des corrélations, on peut distinguer trois types de comportements relatifs aux différents continents. On voit bien l'Asie s'équilibrant avec des foyers de population volumineux comme les indiens et les chinois, travaillant beaucoup d'heures mais produisant peu par heure (on notera que le PIB total n'est pas traduit ici : la Chine avec une très grande population, même en produisant peu, parvient à hisser son PIB total dans les premiers rangs du classement mondial), et pour d'autres pays, moins peuplés, ont une très grande productivité pour un nombre d'heures travaillées beaucoup plus faible. Ce deuxième groupe de pays asiatiques suit la tendance des pays occidentaux, puisque l'Europe et l'Océanie, suivis de près par l'Amérique, montre une efficience des plus élevées. L'Afrique, quant à elle, a tendance à voir sa productivité s'élever à mesure que le nombre d'heures de travail augmente.\ </p>
+<p style="text-align:justify;">
+  Pour ce graphique, nous avons choisi d'exprimer la productivité (en abcisses) sur une échelle logarithmique, pour... \
+  
+-   Echelle log
+-   Grosse efficience européenne (en tête, juste devant l'Amérique) VS Afrique ?
+-   Gros volume asiatique
+</p>
+>>>>>>> 69338953a2fba2ad091ce3de322a396e264f0fa9
 
 ## Animation
 ```{r}
@@ -228,6 +255,7 @@ Nous utilisons l'échelle logarithmique pour la productivité pour tenir compte 
 # =============================================================================
 # 3. Creation of animated plots with plotly
 # =============================================================================
+
 continent_colors <- c(
   "Africa"   = "#fcd421",
   "Americas" = "#00d600",
@@ -238,14 +266,19 @@ continent_colors <- c(
 pop_min <- min(df$population)
 pop_max <- max(df$population)
 
+countries_to_label <- c( "China", "Japan", "Singapore", 
+                          "United States", "Mexico",
+                          "India", "Congo","Nigeria",
+                          "Brazil", "France", "Germany","Australia")
+
 df_sorted <- df |>
   arrange(year, desc(population)) |>
   mutate(
-    bubble_size = 2 + (population - pop_min) / (pop_max - pop_min) * 56)
-
-df_labels <- df_sorted |> filter(population > 5e7)
+    bubble_size = 2 + (population - pop_min) / (pop_max - pop_min) * 56,
+    label       = ifelse(country %in% countries_to_label, country, NA))
 
 figure <- plot_ly(
+<<<<<<< HEAD
   data      = df_sorted,
   x         = ~productivity,
   y         = ~workhour,
@@ -282,6 +315,34 @@ figure <- plot_ly(
     showlegend   = FALSE,
     inherit      = FALSE
   ) |>
+=======
+   data         = df_sorted,
+   x            = ~productivity,
+   y            = ~workhour,
+   size         = ~bubble_size,
+   type         = "scatter",
+   mode         = "markers+text",
+   color        = ~continent,
+   colors       = continent_colors,
+   frame        = ~year,
+   ids          = ~country,
+   text         = ~label,
+   textposition = "center",
+   textfont     = list(color = "#4A235A", size = 10),
+   customdata   = ~paste0(
+     "Country: ",          country,
+     "<br>Productivity: ", round(productivity, 1), " usd/hr",
+     "<br>Workhour: ",     round(workhour, 1),     " hrs/year",
+     "<br>Population: ",   round(population / 1e6, 1), "M"
+   ),
+   hovertemplate = "%{customdata}<extra></extra>",
+   marker = list(
+     opacity  = 0.6,
+     sizemode = "diameter",
+     sizeref  = 1
+   )
+   ) |>
+>>>>>>> 69338953a2fba2ad091ce3de322a396e264f0fa9
   layout(
     title  = list(text = "<b>Productivité horaire du travail VS Nombre d'heures travaillées, 2001-2023</b>",
                   font = list(size = 15)),
@@ -316,7 +377,13 @@ L'analyse de 130 pays sur 2001-2023 confirme une relation globalement négative 
 Ces résultats suggèrent que le volume de travail ne détermine pas mécaniquement la productivité : celle-ci semble davantage être associée à des facteurs structurels (capital, éducation, secteurs) que du seul nombre d'heures travaillées.
 
 
+<<<<<<< HEAD
 # Appendince : Code complet
+=======
+-   Afrique : augmentation travail (lent) + augmentation productivité (+rapide) ?
+</p>
+# Annexe : code complet
+>>>>>>> 69338953a2fba2ad091ce3de322a396e264f0fa9
 
 ```{r ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
 ```

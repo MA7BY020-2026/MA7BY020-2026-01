@@ -69,7 +69,7 @@ df <- dplyr::inner_join(x=productivity_workhour, y=population,
 
 ```
 
-## Graphique statique :
+## Graphique statique 
 
 ```{r}
 #| label: static-plot
@@ -121,9 +121,9 @@ figure_static <- df |>
     color = guide_legend(title = "Continent", override.aes = list(size = 4)),
     size  = "none"
   ) +
-  labs(title = "Labor Productivity vs. Annual Working Hours (2019)",
-       x = "Labor Productivity ( usd/hr, log scale)", 
-       y = "Annual Working Hours( hrs/year)",
+  labs(title = "Productivité horaire du travail VS Nombre d'heures travaillées (2019)",
+       x = "Productivité horaire du travail ( usd/h, log scale)", 
+       y = "Nombre d'heures travaillées ( hrs/year)",
        caption = "Source : Our World in Data")
 
 figure_static
@@ -137,7 +137,7 @@ figure_static
 #| echo: false
 #| message: false
 #| warning: false
-#| fig-width: 5
+#| fig-width: 6
 #| fig-height: 2
 #| out-width: "100%"
 #| dpi: 300
@@ -200,10 +200,10 @@ figure <- plot_ly(
     inherit      = FALSE
   ) |>
   layout(
-    title  = list(text = "<b>Labor Productivity vs. Annual Working Hours</b>",
+    title  = list(text = "<b>Productivité horaire du travail VS Nombre d'heures travaillées</b>",
                   font = list(size = 15)),
-    xaxis  = list(title = "Labor Productivity ( usd/hr, log scale)", type = "log"),
-    yaxis  = list(title = "Annual Working Hours( hrs/year)"),
+    xaxis  = list(title = "Productivité horaire du travail ( usd/hr, log scale)", type = "log"),
+    yaxis  = list(title = "Nombre d'heures travaillées( hrs/year)"),
     legend = list(title = list(text = "Continent")),
     paper_bgcolor = "white",
     plot_bgcolor  = "#f9f9f9"

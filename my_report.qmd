@@ -7,6 +7,9 @@ execute:
   eval: true
   echo: false
 ---
+<style>
+p { text-align: justify; }
+</style>
 
 LUNETTE Malcom, HUANG Luxuan
 
@@ -15,30 +18,29 @@ LUNETTE Malcom, HUANG Luxuan
 # 1 - Introduction
 
 #### Contexte et Motivation
-<p style="text-align:justify;">
-Intuitivement, nous pourrions penser que travailler plus d'heures rend un pays plus productif. Pourtant, nous constatons une relation paradoxale : en 2019, les données observées nous montrent que les français ont travaillé (en moyenne, par personne) 1504 heures pour produire 80\$ par heures travaillées, tandis que l'Allemagne, au même moment, a travaillé seulement 1372 heures pour produire 81\$ par heures travaillées : pour une productivité équivalente, les Allemands travaillent 9% d'heures en moins. Ce constat nous a fait soulever la question suivante : le volume de travail détermine-t-il la productivité horaire ?
-</p>
+Intuitivement, nous pourrions penser que travailler plus d'heures rend un pays plus productif. Pourtant, nous constatons une relation paradoxale : en 2019, les données observées nous montrent que les Français ont travaillé (en moyenne, par personne) 1504 heures pour produire 80\$ par heures travaillées, tandis que les Allemands, au même moment, ont travaillé seulement 1372 heures pour produire 81\$ par heures travaillées : pour une productivité équivalente, les Allemands travaillent 9% d'heures en moins. Ce constat nous a fait soulever la question suivante : quelle relation existe-t-il entre volume de travail et productivité horaire ?
+
 
 #### Définitions
-<p style="text-align:justify;">
+
 En économie, la productivité est définie par le rapport entre la production (*output*) et les facteurs utilisés lors du processus de production (*input*). Parmi ces facteurs de production, on compte le capital (les biens durables utilisés dans la production), et le travail (l'effort humain consacré à la production). C'est le travail qui nous intéresse ici, en particulier la productivité horaire du travail, définie comme suit : $Productivité\ horaire\ du\ travail\ = \dfrac{PIB\ total}{Nombre\ total\ d'heures\ travaillées}$ .\
 Cette métrique est exprimée en dollars par heure (\$/h), et nous permet de comparer la productivité des pays entre eux, indépendamment de la taille de leur population, et de leur économie.
-</p>
+
 #### Données
-<p style="text-align:justify;">
-Notre analyse mobilise les données extraites du site Our World in Data, produites par Penn World Table 11.0, couvrant 129 pays entre 1950 et 2023. Les variables retenues sont :
+
+Notre analyse mobilise les données extraites du site Our World in Data, produites par Penn World Table 11.0, couvrant 130 pays entre 1950 et 2023. Les variables retenues sont :
 
 -   **Productivité horaire** : PIB par heures travaillées, exprimée en dollars internationaux 2021 en parité de pouvoir d'achat (PPA), permettant la comparabilité internationale,
 
 -   **Heures travaillées** : Moyenne annuelle par travailleur actif,
 
 -   **Population** : Utilisée comme pondération dans les visualisations.
-</p>
+
 
 #### Limitations identifiées
-<p style="text-align:justify;">
+
 Les données africaines ne débutent qu'en 2001, contre 1950 pour les autres continents. Dans un souci méthodologique, nous avons choisi de concentrer l'analyse comparative sur la période 2001-2023, permettant d'inclure l'Afrique tout en conservant une profondeur historique suffisante.
-</p>
+
 
 # 2 - Résultats
 
@@ -127,11 +129,12 @@ stats_full <- df |>
 knitr::kable(stats_full, 
   col.names = c("Continent","Nb de pays","Productivité moyenne ($/h)","Nombre d'heures moyen/an","Corrélation [-1:1]")
 )
+
 ```
 #### Analyse des résultats statistiques
   Les corrélations sont calculées en agrégeant l'ensemble des observations (pays × années) de chaque continent sur 2001-2023. Elles reflètent à la fois les différences structurelles entre pays et les évolutions temporelles, sans distinguer les deux effets.  Le choix de considérer les *données poolées*^[**Données poolées :** Données agrégées pour être analysées ensemble. Ici, le coefficient de corrélation est calculé pour chaque continent à partir de l'ensemble des données relatives au continent considéré. On y agrège donc, par continent, les données (productivité et heures travaillées) de tous les pays et de toutes les années confondus.] a été fait pour observer les tendances générales des continents.
 
-**Europe/Océanie** affichent une forte corrélation négative (-0.75, -0.96), suivies de près par les **Amériques** (-0.53): les pays travaillant moins d'heures tendent à afficher une productivité plus élevée.
+**Europe/Océanie** affichent une forte corrélation négative (-0.75, -0.96), suivies de près par l'**Amérique** (-0.53): les pays travaillant moins d'heures tendent à afficher une productivité plus élevée.
 
 **L'Asie** présente une corrélation quasi-nulle (-0.02), reflétant une grande hétérogénéité : on observe conjointement des pays travaillant beaucoup d'heures et produisant peu, et des pays avec une grande productivité dont le temps de travail est plus faible. Par exemple, en 2019, Singapour (2330h, 62\$/h) et le Japon (1687h, 49\$/h) coexistent avec l'Inde (2605h, 7\$/h) et la Chine (2357h, 14\$/h). Cette hétérogénéité annule tout pattern général.
 
@@ -141,7 +144,7 @@ Ces trois groupes présentent ainsi des tendances différentes, qui s'expriment 
 
 
 
-## Graphique statique : 
+## Graphique statique : 2019, dernière année stable avant le Covid
 ```{r}
 #| label: static-plot
 #| echo: false
@@ -200,16 +203,20 @@ figure_static
 
 ```
 
-#### \[Analyse statique par continent 2019\]
-<p style="text-align:justify;">
-  Comme nous l'avons vu dans un premier temps avec le tableau des corrélations, on peut distinguer trois types de comportements relatifs aux différents continents. On voit bien l'Asie s'équilibrant avec des foyers de population volumineux comme les indiens et les chinois, travaillant beaucoup d'heures mais produisant peu par heure (on notera que le PIB total n'est pas traduit ici : la Chine avec une très grande population, même en produisant peu, parvient à hisser son PIB total dans les premiers rangs du classement mondial), et pour d'autres pays, moins peuplés, ont une très grande productivité pour un nombre d'heures travaillées beaucoup plus faible. Ce deuxième groupe de pays asiatiques suit la tendance des pays occidentaux, puisque l'Europe et l'Océanie, suivis de près par l'Amérique, montre une efficience des plus élevées. L'Afrique, quant à elle, a tendance à voir sa productivité s'élever à mesure que le nombre d'heures de travail augmente.\ </p>
-<p style="text-align:justify;">
-  Pour ce graphique, nous avons choisi d'exprimer la productivité (en abcisses) sur une échelle logarithmique, pour... \
-  
--   Echelle log
--   Grosse efficience européenne (en tête, juste devant l'Amérique) VS Afrique ?
--   Gros volume asiatique
-</p>
+#### Analyse par continent
+
+Le graphique confirme visuellement les trois patterns identifiés statistiquement.
+
+Nous utilisons l'échelle logarithmique pour la productivité pour tenir compte de la forte dispersion des valeurs entre les pays. En effet, la productivité varie de 1.8\$/h pour la République Démocratique du Congo, à 141.3\$/h pour l'Irlande, soit un rapport de 1:78.5. Visuellement, cette échelle évite de compresser les pays à faible productivité, nous permettant une meilleure comparaison.
+
+**L'Europe, et l'Océanie**  se concentrent dans la zone haute productivité/faibles heures travaillées (50-120\$/h, 1400-1800h/an). Les pays les plus peuplés affichent tous ce pattern, à l'exception de la Russie (qui dépasse les 2000h/an). **Les Amériques** présentent une dispersion intermédiaire : les États-Unis (78\$/h, 1797h) et le Canada (61\$/h, 1748h) se rapprochent du modèle européen, tandis que les pays d'Amérique latine (Mexique, Brésil, Colombie) combinent productivité moyenne (15-30\$/h) et volumes plus élevés (1600-2400h).
+
+
+**L'Asie** se répartit sur un large spectre : les géants démographiques (Chine, Inde) occupent la zone haut volume horaire/faible productivité (2200-2600h, 7-15\$/h), tandis que Singapour, Japon et Corée du Sud se rapprochent du modèle européen.
+
+**L'Afrique** se concentre dans la zone faible productivité (5-25\$/h) / volume élevé (1600-2700h).
+
+
 ## Animation
 ```{r}
 #| label: animated-plot
@@ -255,9 +262,9 @@ figure <- plot_ly(
     sizeref  = 1                 
   ),
   text = ~paste0(
-    "Country: ",          country,
-    "<br>Productivity: ", round(productivity, 1),"usd/hr",
-    "<br>Workhour: ",     round(workhour, 1),"hrs/year",
+    "Pays: ",          country,
+    "<br>Productivité: ", round(productivity, 1),"usd/hr",
+    "<br>Heures travaillées: ",     round(workhour, 1),"hrs/year",
     "<br>Population: ",   round(population / 1e6, 1), "M" 
   ),
   hoverinfo = "text"
@@ -276,7 +283,7 @@ figure <- plot_ly(
     inherit      = FALSE
   ) |>
   layout(
-    title  = list(text = "<b>Productivité horaire du travail VS Nombre d'heures travaillées</b>",
+    title  = list(text = "<b>Productivité horaire du travail VS Nombre d'heures travaillées, 2001-2023</b>",
                   font = list(size = 15)),
     xaxis  = list(title = "Productivité horaire du travail ( usd/hr, log scale)", type = "log"),
     yaxis  = list(title = "Nombre d'heures travaillées( hrs/year)"),
@@ -291,14 +298,24 @@ figure <- plot_ly(
 figure
 ```
 
-#### \[Analyse animation 2001-2023\]
-<p style="text-align:justify;">
--   Rétrogradation globale au moment du Covid (sur le nombre d'heures travaillées, mais pas sur la productivité ?)
+#### Analyse animation 2001-2023
 
--   Augmentation globale de la productivité (grosses avancées Chine +400% en gardant env le même nombre d'heures de travail : augmentation de l'efficience) sur l'intégralité de la période
+L'animation révèle deux dynamiques majeures sur la période :
 
--   Afrique : augmentation travail (lent) + augmentation productivité (+rapide) ?
-</p>
+1. **Hausse généralisée de la productivité :** Tous les continents progressent, avec des rythmes différents. La Chine illustre cette tendance de manière spectaculaire : sa productivité a augmenté de plus de 465% (3.8\$/h en 2001 → 17.7\$/h en 2023) sans réduction significative du volume horaire (2351h en 2001 → 2327h en 2023).
+
+2. **Choc COVID-19 (2019-2020) :** Une rétrogradation brutale et généralisée du volume horaire est visible entre 2019 et 2020, conséquence des confinements mondiaux. La productivité horaire, en revanche, reste stable voire augmente légèrement, suggérant que la réduction du travail a touché principalement les secteurs à faible valeur ajoutée.
+
+*Convergence limitée :* Malgré les gains de productivité asiatiques et africains, les écarts relatifs entre continents demeurent stables. L'Europe conserve son avance (50-60\$/h en moyenne) tandis que l'Afrique progresse lentement : la grande majorité des pays gardent une productivité inférieure à 10\$/h entre 2005 et 2023.
+
+
+## Conclusion
+
+L'analyse de 130 pays sur 2001-2023 confirme une relation globalement négative entre volume horaire et productivité, mais révèle des dynamiques régionales contrastées. L'Europe illustre le modèle "haute efficience / faibles heures", l'Afrique suit un pattern inverse, et l'Asie présente une hétérogénéité extrême, qui annule toute corrélation globale.
+
+Ces résultats suggèrent que le volume de travail ne détermine pas mécaniquement la productivité : celle-ci semble davantage être associée à des facteurs structurels (capital, éducation, secteurs) que du seul nombre d'heures travaillées.
+
+
 # Appendince : Code complet
 
 ```{r ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}

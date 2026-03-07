@@ -160,7 +160,7 @@ df_sorted <- df |>
   mutate(
     bubble_size = 2 + (population - pop_min) / (pop_max - pop_min) * 56)
 
-df_labels <- df_sorted |> filter(population > 6e7)
+df_labels <- df_sorted |> filter(population > 5e7)
 
 figure <- plot_ly(
   data      = df_sorted,

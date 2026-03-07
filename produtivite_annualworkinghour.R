@@ -45,7 +45,7 @@ df <- dplyr::inner_join(x=productivity_workhour, y=population,
      dplyr::arrange(country, year) 
 
 # =============================================================================
-# 2. Creation of static plots with ggplot
+# 2. Creation of static plot with ggplot
 # =============================================================================
 figure_static <- df |>
   filter(year == 2019) |>                        
@@ -57,7 +57,9 @@ figure_static <- df |>
              label = country)) +                
   geom_point(alpha = 0.6, stroke = 1.0) +
   geom_text_repel(
-    data = ~ filter(.x, population > 5e7),  
+    data = ~ filter(.x, (.x, country %in% c(
+      "China", "Japon","Singapour","United States", 
+      "India", "Brazil", "France","Germany"))),  # We only display part of the countries 
     aes(label = country),   
     size = 3, 
     max.overlaps = 20,
@@ -105,9 +107,9 @@ continent_colors <- c(
 pop_min <- min(df$population)
 pop_max <- max(df$population)
 
-df_sorted <- df |>
+df_sorted <- df |>   # This dataframe is for plotly
   arrange(year, desc(population)) |>
-  mutate(
+  mutate(    # We add a column indicating bubble size
     bubble_size = 2 + (population - pop_min) / (pop_max - pop_min) * 56)
 
 df_labels <- df_sorted |> filter(population > 5e7)

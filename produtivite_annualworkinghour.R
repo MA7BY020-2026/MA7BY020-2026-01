@@ -57,9 +57,11 @@ figure_static <- df |>
              label = country)) +                
   geom_point(alpha = 0.6, stroke = 1.0) +
   geom_text_repel(
-    data = ~ filter(.x, (.x, country %in% c(
-      "China", "Japon","Singapour","United States", 
-      "India", "Brazil", "France","Germany"))),  # We only display part of the countries 
+    data = ~ filter (.x, country %in% c(
+      "China", "Japan", "Singapore", 
+      "United States", "Mexico",
+      "India", "Congo","Nigeria",
+      "Brazil", "France", "Germany","Australia")),  # We only display part of the countries 
     aes(label = country),   
     size = 3, 
     max.overlaps = 20,
@@ -107,50 +109,44 @@ continent_colors <- c(
 pop_min <- min(df$population)
 pop_max <- max(df$population)
 
-df_sorted <- df |>   # This dataframe is for plotly
-  arrange(year, desc(population)) |>
-  mutate(    # We add a column indicating bubble size
-    bubble_size = 2 + (population - pop_min) / (pop_max - pop_min) * 56)
+countries_to_label <- c( "China", "Japan", "Singapore", 
+                          "United States", "Mexico",
+                          "India", "Congo","Nigeria",
+                          "Brazil", "France", "Germany","Australia")
 
-df_labels <- df_sorted |> filter(population > 5e7)
+df_sorted <- df |>
+  arrange(year, desc(population)) |>
+  mutate(
+    bubble_size = 2 + (population - pop_min) / (pop_max - pop_min) * 56,
+    label       = ifelse(country %in% countries_to_label, country, NA))
 
 figure <- plot_ly(
-  data      = df_sorted,
-  x         = ~productivity,
-  y         = ~workhour,
-  size      = ~bubble_size,      
-  color     = ~continent,
-  colors    = continent_colors,
-  frame     = ~year,
-  ids       = ~country,
-  type      = "scatter",
-  mode      = "markers",
-  marker    = list(
-    opacity  = 0.6,
-    sizemode = "diameter",      
-    sizeref  = 1                 
-  ),
-  text = ~paste0(
-    "Country: ",          country,
-    "<br>Productivity: ", round(productivity, 1),"usd/hr",
-    "<br>Workhour: ",     round(workhour, 1),"hrs/year",
-    "<br>Population: ",   round(population / 1e6, 1), "M" 
-  ),
-  hoverinfo = "text"
+   data         = df_sorted,
+   x            = ~productivity,
+   y            = ~workhour,
+   size         = ~bubble_size,
+   type         = "scatter",
+   mode         = "markers+text",
+   color        = ~continent,
+   colors       = continent_colors,
+   frame        = ~year,
+   ids          = ~country,
+   text         = ~label,
+   textposition = "center",
+   textfont     = list(color = "#4A235A", size = 10),
+   customdata   = ~paste0(
+     "Country: ",          country,
+     "<br>Productivity: ", round(productivity, 1), " usd/hr",
+     "<br>Workhour: ",     round(workhour, 1),     " hrs/year",
+     "<br>Population: ",   round(population / 1e6, 1), "M"
+   ),
+   hovertemplate = "%{customdata}<extra></extra>",
+   marker = list(
+     opacity  = 0.6,
+     sizemode = "diameter",
+     sizeref  = 1
+   )
    ) |>
-  add_text(
-    data         = df_labels,       
-    x            = ~productivity,   
-    y            = ~workhour,       
-    frame        = ~year,
-    ids          = ~country,
-    text         = ~country,
-    textposition = "top center",
-    textfont     = list(color = "#4A235A", size = 10),
-    hoverinfo    = "skip",
-    showlegend   = FALSE,
-    inherit      = FALSE
-  ) |>
   layout(
     title  = list(text = "<b>Productivité horaire du travail VS Nombre d'heures travaillées</b>",
                   font = list(size = 15)),

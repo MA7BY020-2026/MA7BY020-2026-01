@@ -1,6 +1,6 @@
 ---
-title: "Présentation orale"
-subtitle: "Productivité horaire du travail VS Nombre d'heures travaillées"
+title: "Productivité VS Heures travaillées"
+subtitle: "Quelle relation existe-t-il entre le volume de travail et la productivité horaire ?"
 author: "LUNETTE Malcom, HUANG Luxuan"
 format: revealjs
 execute:
@@ -8,9 +8,21 @@ execute:
   echo: false
 ---
 
-# Introduction
 
-Nous allons analyser des données de One World in Data sur productivité horaire du travail et nombre d'heures travaillées.
+# Nos données
+- Source du dataset : Our World in Data, données produites par Penn World Table 11.0
+- Couverture du dataset : 130 pays entre 2001 et 2023
+- Productivité horaire: PIB en parité de pouvoir d'achat (PPA), exprimé en Dollars internationaux (2021)
+
+
+# Définitions
+
+$$
+Productivité\ horaire =
+\frac{PIB}{Nombre\ total\ d'heures\ travaillées}
+$$
+Heures travaillées : Moyenne annuelle par travailleur
+
 
 ```{r}
 #| message: false
@@ -69,7 +81,11 @@ df <- dplyr::inner_join(x=productivity_workhour, y=population,
 
 ```
 
-## Graphique statique 
+## 2019, dernière année stable avant le Covid  
+
+:::: {.columns}
+
+::: {.column width = "85%"}
 
 ```{r}
 #| label: static-plot
@@ -96,10 +112,11 @@ figure_static <- df |>
   geom_point(alpha = 0.6, stroke = 1.0) +
   geom_text_repel(
     data = ~ filter (.x, country %in% c(
-      "China", "Japan", "Singapore", 
-      "United States", "Mexico",
-      "India", "Congo","Nigeria",
-      "Brazil", "France", "Germany","Australia")),  # We only display part of the countries 
+      "China", "Japan", "Singapore",
+    "United States", "Mexico",
+    "India", "Democratic Republic of Congo", "Nigeria",
+    "Brazil", "France", "Germany", "Australia", "Ireland", "Russia",
+    "Colombia", "Canada", "South Korea")),  # We only display part of the countries 
     aes(label = country),   
     size = 3, 
     max.overlaps = 20,
@@ -135,7 +152,44 @@ figure_static
 
 ```
 
-## Animation
+:::
+
+::: {.column width = "15%"}
+
+<style>
+.compact-table table {
+  font-size: 20px !important;
+  width: 100% !important;
+}
+.compact-table th, .compact-table td {
+  padding: 4px !important;
+}
+</style>
+
+<div class="compact-table">
+```{r}
+#| label: stats
+#| echo: false
+
+#Corrélations par continent (2001-2023) 
+knitr::kable(stats_full <- df |>
+  group_by(continent) |> 
+  summarise(
+    correlation = round(cor(workhour, productivity), 2),
+    .groups = "drop"
+  ) |> 
+  arrange(continent), 
+  col.names = c("Continent","r"),
+  format = "html"
+)
+```
+</div>
+
+:::
+
+::::
+
+## Evolution de 2001 à 2023
 
 ```{r}
 #| label: animated-plot
@@ -160,10 +214,11 @@ continent_colors <- c(
 pop_min <- min(df$population)
 pop_max <- max(df$population)
 
-countries_to_label <- c( "China", "Japan", "Singapore", 
-                          "United States", "Mexico",
-                          "India", "Congo","Nigeria",
-                          "Brazil", "France", "Germany","Australia")
+countries_to_label <- c( "China", "Japan", "Singapore",
+    "United States", "Mexico",
+    "India", "Democratic Republic of Congo", "Nigeria",
+    "Brazil", "France", "Germany", "Australia", "Ireland", "Russia",
+    "Colombia", "Canada", "South Korea")
 
 df_sorted <- df |>
   arrange(year, desc(population)) |>
@@ -199,7 +254,7 @@ figure <- plot_ly(
    )
    ) |>
   layout(
-    title  = list(text = "<b>Productivité horaire du travail VS Nombre d'heures travaillées</b>",
+    title  = list(text = "<b>Productivité horaire du travail VS Nombre d'heures travaillées (2001 - 2023)</b>",
                   font = list(size = 15)),
     xaxis  = list(title = "Productivité horaire du travail ( usd/hr, log scale)", type = "log"),
     yaxis  = list(title = "Nombre d'heures travaillées( hrs/year)"),

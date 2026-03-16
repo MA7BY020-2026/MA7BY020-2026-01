@@ -1,5 +1,5 @@
 ---
-title: "Productivité VS Heures travaillées"
+title: "Productivité horaire VS Heures travaillées"
 subtitle: "Quelle relation existe-t-il entre le volume de travail et la productivité horaire ?"
 author: "LUNETTE Malcom, HUANG Luxuan"
 format: revealjs
@@ -9,19 +9,20 @@ execute:
 ---
 
 
-# Nos données
-- Source du dataset : Our World in Data, données produites par Penn World Table 11.0
-- Couverture du dataset : 130 pays entre 2001 et 2023
-- Productivité horaire: PIB en parité de pouvoir d'achat (PPA), exprimé en Dollars internationaux (2021)
 
-
-# Définitions
+### Définitions
 
 $$
 Productivité\ horaire =
 \frac{PIB}{Nombre\ total\ d'heures\ travaillées}
 $$
-Heures travaillées : Moyenne annuelle par travailleur
+$$Heures\ travaillées\ : Moyenne\ annuelle\ par\ travailleur$$
+
+### Nos données
+- Source du dataset : Our World in Data, données produites par Penn World Table 11.0
+- Couverture du dataset : 130 pays entre 2001 et 2023
+- Productivité horaire: PIB en parité de pouvoir d'achat (PPA), exprimé en Dollars internationaux (2021)
+
 
 
 ```{r}
@@ -144,8 +145,8 @@ figure_static <- df |>
     size  = "none"
   ) +
   labs(title = "Productivité horaire du travail VS Nombre d'heures travaillées (2019)",
-       x = "Productivité horaire du travail ( usd/h, log scale)", 
-       y = "Nombre d'heures travaillées ( hrs/year)",
+       x = "Productivité horaire du travail ($/h)", 
+       y = "Nombre d'heures travaillées (h/an)",
        caption = "Source : Our World in Data")
 
 figure_static
@@ -171,16 +172,17 @@ figure_static
 #| label: stats
 #| echo: false
 
-#Corrélations par continent (2001-2023) 
+#Corrélations par continent (2019)
 knitr::kable(stats_full <- df |>
-  group_by(continent) |> 
-  summarise(
-    correlation = round(cor(workhour, productivity), 2),
-    .groups = "drop"
-  ) |> 
-  arrange(continent), 
-  col.names = c("Continent","r"),
-  format = "html"
+  filter(year == 2019) |>
+    group_by(continent) |> 
+      summarise(
+        correlation = round(cor(workhour, productivity), 2),
+        .groups = "drop"
+      ) |> 
+      arrange(continent), 
+      col.names = c("Continent","r"),
+      format = "html"
 )
 ```
 </div>
@@ -256,8 +258,8 @@ figure <- plot_ly(
   layout(
     title  = list(text = "<b>Productivité horaire du travail VS Nombre d'heures travaillées (2001 - 2023)</b>",
                   font = list(size = 15)),
-    xaxis  = list(title = "Productivité horaire du travail ( usd/hr, log scale)", type = "log"),
-    yaxis  = list(title = "Nombre d'heures travaillées( hrs/year)"),
+    xaxis  = list(title = "Productivité horaire du travail ($/h)", type = "log"),
+    yaxis  = list(title = "Nombre d'heures travaillées(h/an)"),
     legend = list(title = list(text = "Continent")),
     paper_bgcolor = "white",
     plot_bgcolor  = "#f9f9f9"
